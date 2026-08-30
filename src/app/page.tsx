@@ -7,7 +7,7 @@ import { ArrowIcon } from "@/components/icons";
 import { getCollectorOverview, getLatestArticles } from "@/lib/articles";
 import { formatKoreanToday } from "@/lib/format";
 import { selectHomeHighlights } from "@/lib/recommendations";
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 export default async function HomePage() {
   const [articles, overview] = await Promise.all([getLatestArticles(30), getCollectorOverview()]);
   const highlights = selectHomeHighlights(articles, 5);

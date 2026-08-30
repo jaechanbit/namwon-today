@@ -4,9 +4,11 @@ import { notFound } from "next/navigation";
 import { AttachmentBadge, EventInfo, SourceBadge } from "@/components/article-parts";
 import { Header } from "@/components/header";
 import { ArrowIcon, PhoneIcon } from "@/components/icons";
-import { getArticle } from "@/lib/articles";
+import { getArticle, getArticles } from "@/lib/articles";
 import { formatFullDate } from "@/lib/format";
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
+export const dynamicParams = false;
+export async function generateStaticParams() { return (await getArticles()).map((article) => ({ id: article.id })); }
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> { const article = await getArticle((await params).id); return { title: article?.original_title ?? "소식 상세" }; }
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const article = await getArticle((await params).id); if (!article) notFound();

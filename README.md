@@ -63,6 +63,12 @@ npm run build
 npm start
 ```
 
+## GitHub Pages 배포
+
+`main` 브랜치에 push하면 GitHub Actions가 정적 사이트를 빌드해 Pages에 배포합니다. 저장소 Actions secret에 `NEXT_PUBLIC_SUPABASE_URL`과 `NEXT_PUBLIC_SUPABASE_ANON_KEY`가 필요합니다.
+
+GitHub Pages에는 서버 런타임이 없으므로 배포 시점의 Supabase 데이터를 정적 HTML로 생성합니다. 수집 후 최신 데이터를 사이트에 반영하려면 `Deploy 오늘남원 to GitHub Pages` workflow를 다시 실행합니다. 수집기의 service role key는 Pages에 등록하거나 노출하지 않습니다.
+
 ## 수집기 실행
 
 DB 저장 없이 JSON 수집:
