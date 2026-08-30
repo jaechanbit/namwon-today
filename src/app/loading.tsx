@@ -1,0 +1,1 @@
+export default function Loading() { return <main className="page loading-page" aria-label="불러오는 중"><div className="skeleton hero-skeleton"/><div className="skeleton card-skeleton"/><div className="skeleton card-skeleton"/></main>; }

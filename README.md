@@ -1,0 +1,128 @@
+# 오늘남원
+
+> 나에게 필요한 남원시 소식만
+
+남원시청 6개 행정정보 게시판을 안정적으로 수집하고, 시민이 모바일에서 쉽게 확인할 수 있도록 보여주는 서비스입니다. 원문 데이터와 향후 AI 가공 데이터는 분리하며, 현재 버전에는 OpenAI·자동요약·로그인·알림이 없습니다.
+
+## 기술 스택
+
+- Next.js 16 App Router, React 19, TypeScript
+- Tailwind CSS 4 및 반응형 CSS
+- Supabase PostgreSQL, Supabase JavaScript SDK
+- Node.js `fetch`, Cheerio 수집기
+- Node Test Runner 기반 fixture/DB 동기화 테스트
+
+## 구현된 기능
+
+- `/`: 최신 데이터를 정보원별로 섞은 주요 소식, 실제 collector 실행 현황
+- `/news`: 30개 실제 행정정보 목록 및 6개 정보원 필터
+- `/news/[id]`: 본문, 담당부서, 전화, 공연 정보, 첨부파일, 남원시 원문 링크
+- `/settings`: 관심지역·관심분야 localStorage 저장
+- 모바일 하단 내비게이션과 375/768/1280px 반응형 레이아웃
+- 로딩, 오류, 빈 데이터, 404 상태
+- 공지사항·읍면동소식·공연행사·시험채용·고시공고·보도자료 수집
+- NEW/UPDATED/UNCHANGED 판별 및 Supabase upsert
+
+## 환경변수
+
+```bash
+cp .env.example .env.local
+```
+
+웹 읽기용 변수:
+
+```dotenv
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+# 레거시 anon key를 쓰는 프로젝트라면 아래 변수 사용
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+수집 CLI 전용 변수는 `.env`에 두며 브라우저 코드로 전달하지 않습니다.
+
+```dotenv
+SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=
+```
+
+`.env`, `.env.local`, service role/secret key는 절대 Git에 커밋하지 않습니다. `NEXT_PUBLIC_*`에는 공개 가능한 publishable/anon key만 사용합니다.
+
+## 로컬 실행
+
+```bash
+npm install
+npm run dev
+```
+
+기본 주소는 [http://localhost:3000](http://localhost:3000)입니다. 3000번이 이미 사용 중이면 Next.js가 다음 빈 포트를 안내합니다.
+
+Production 확인:
+
+```bash
+npm run build
+npm start
+```
+
+## 수집기 실행
+
+DB 저장 없이 JSON 수집:
+
+```bash
+npm run crawl
+```
+
+Supabase 저장 및 사람이 읽는 요약:
+
+```bash
+npm run collect
+```
+
+JSON 결과만 출력:
+
+```bash
+npm run collect:json
+```
+
+## DB migration
+
+```bash
+supabase login
+supabase link --project-ref YOUR_PROJECT_REF
+supabase db push
+```
+
+Migration은 `supabase/migrations/`에서 관리합니다. 원본 테이블은 `sources`, `articles`, `attachments`, `collector_runs`이며, 공개 웹에는 anon SELECT만 허용합니다. 쓰기는 서버 수집기의 service role만 담당합니다.
+
+## 품질검사
+
+```bash
+npm run typecheck
+npm run lint
+npm test
+npm run build
+```
+
+## 주요 구조
+
+```text
+src/app/                 Next.js 페이지와 상태 UI
+src/components/          재사용 웹 컴포넌트
+src/lib/                 웹 데이터 조회·추천 규칙·표시 형식
+src/config/              6개 수집 정보원 설정
+src/http/                안정적인 순차 HTTP client
+src/parsers/             Cheerio parser
+src/db/                  Supabase repository와 동기화 서비스
+supabase/migrations/     재현 가능한 PostgreSQL schema/RLS
+test/fixtures/           네트워크 없는 parser fixture
+test/                    parser 및 DB 동기화 테스트
+```
+
+## 향후 구현 예정
+
+- 원본과 분리된 AI 요약·분류·중요도 데이터 계층
+- 관심정보 기반 개인화 추천
+- 사용자 로그인과 기기간 관심정보 동기화
+- 신규 중요소식 알림
+- 첨부파일 내용 분석
+
+AI 기능은 현재 상세페이지에 자리만 준비되어 있으며 가짜 AI 데이터를 저장하지 않습니다.

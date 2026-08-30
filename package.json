@@ -1,0 +1,41 @@
+{
+  "name": "today-namwon",
+  "version": "0.1.0",
+  "private": true,
+  "description": "남원시 행정정보를 수집하고 시민에게 보여주는 오늘남원",
+  "type": "module",
+  "scripts": {
+    "crawl": "tsx src/index.ts",
+    "collect": "tsx src/db-index.ts",
+    "collect:json": "tsx src/db-index.ts --json",
+    "test": "node --import tsx --test test/**/*.test.ts",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.4",
+    "cheerio": "^1.1.2",
+    "dotenv": "^17.2.2",
+    "next": "^16.3.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^22.18.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^16.3.3",
+    "playwright": "^1.62.1",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
