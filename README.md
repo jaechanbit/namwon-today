@@ -2,7 +2,7 @@
 
 > 나에게 필요한 남원시 소식만
 
-남원시청 6개 행정정보 게시판을 안정적으로 수집하고, 시민이 모바일에서 쉽게 확인할 수 있도록 보여주는 서비스입니다. 원문 데이터와 향후 AI 가공 데이터는 분리하며, 현재 버전에는 OpenAI·자동요약·로그인·알림이 없습니다.
+남원시청 6개 행정정보 게시판을 안정적으로 수집하고, 시민이 모바일에서 쉽게 확인할 수 있도록 보여주는 서비스입니다. 원문 데이터와 AI 가공 데이터는 분리하며, 현재 버전에는 로그인·알림이 없습니다.
 
 ## 기술 스택
 
@@ -22,6 +22,7 @@
 - 로딩, 오류, 빈 데이터, 404 상태
 - 공지사항·읍면동소식·공연행사·시험채용·고시공고·보도자료 수집
 - NEW/UPDATED/UNCHANGED 판별 및 Supabase upsert
+- 신규·수정 게시물의 AI 핵심요약 및 핵심 포인트 생성
 
 ## 환경변수
 
@@ -43,6 +44,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```dotenv
 SUPABASE_URL=
 SUPABASE_SERVICE_ROLE_KEY=
+OPENAI_API_KEY=
+# 선택사항 (기본값: gpt-5-nano)
+OPENAI_SUMMARY_MODEL=
 ```
 
 `.env`, `.env.local`, service role/secret key는 절대 Git에 커밋하지 않습니다. `NEXT_PUBLIC_*`에는 공개 가능한 publishable/anon key만 사용합니다.
@@ -80,6 +84,7 @@ SUPABASE_URL
 SUPABASE_SERVICE_ROLE_KEY
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY
+OPENAI_API_KEY
 ```
 
 `SUPABASE_SERVICE_ROLE_KEY`는 수집 workflow에만 전달되며 Pages 빌드나 브라우저 번들에는 전달되지 않습니다. 일부 게시물이라도 수집 또는 저장에 실패하면 workflow가 실패하고, 이전에 정상 배포된 Pages는 그대로 유지됩니다.
@@ -102,6 +107,12 @@ JSON 결과만 출력:
 
 ```bash
 npm run collect:json
+```
+
+아직 요약되지 않았거나 원문이 변경된 게시물 요약:
+
+```bash
+npm run summarize
 ```
 
 ## DB migration
@@ -140,7 +151,6 @@ test/                    parser 및 DB 동기화 테스트
 
 ## 향후 구현 예정
 
-- 원본과 분리된 AI 요약·분류·중요도 데이터 계층
 - 관심정보 기반 개인화 추천
 - 사용자 로그인과 기기간 관심정보 동기화
 - 신규 중요소식 알림
