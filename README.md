@@ -69,6 +69,21 @@ npm start
 
 GitHub Pages에는 서버 런타임이 없으므로 배포 시점의 Supabase 데이터를 정적 HTML로 생성합니다. 수집 후 최신 데이터를 사이트에 반영하려면 `Deploy 오늘남원 to GitHub Pages` workflow를 다시 실행합니다. 수집기의 service role key는 Pages에 등록하거나 노출하지 않습니다.
 
+## 자동 수집
+
+`Collect 남원시 소식` workflow가 평일 한국시간 09:10, 12:10, 15:10, 18:10에 실행됩니다. 수집 결과를 Supabase에 저장한 뒤, 수집이 모두 성공한 경우에만 Pages를 다시 빌드하고 배포합니다. GitHub Actions 화면의 `Run workflow`로 수동 실행할 수도 있습니다.
+
+저장소 Actions secrets에는 다음 값을 등록해야 합니다.
+
+```text
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+```
+
+`SUPABASE_SERVICE_ROLE_KEY`는 수집 workflow에만 전달되며 Pages 빌드나 브라우저 번들에는 전달되지 않습니다. 일부 게시물이라도 수집 또는 저장에 실패하면 workflow가 실패하고, 이전에 정상 배포된 Pages는 그대로 유지됩니다.
+
 ## 수집기 실행
 
 DB 저장 없이 JSON 수집:
